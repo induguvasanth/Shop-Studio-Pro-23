@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shop Studio | Protected Owner Console</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#f4f6ff;font:14px system-ui,Segoe UI,sans-serif}header{padding:20px max(18px,calc((100vw - 1160px)/2));background:#131b35;border-bottom:1px solid #2a3552;display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:22px;font-weight:800;color:#c8b2ff}.wrap{max-width:1160px;margin:25px auto;padding:0 18px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}.stat,.card{background:#151e37;border:1px solid #2b3652;border-radius:16px;padding:18px}.stat b{font-size:26px;display:block;margin-top:7px}.muted{color:#aab7d2}.top,.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}button{font:inherit;cursor:pointer;padding:9px 12px;border:0;border-radius:9px;background:#a38bff;color:#0e1220;font-weight:750;margin:2px}button.secondary{background:#2c3a5d;color:white}button.danger{background:#ef9ca5}button:disabled{opacity:.5;cursor:not-allowed}input{background:#111a32;border:1px solid #435172;color:white;padding:9px;border-radius:9px;max-width:100%}table{width:100%;border-collapse:collapse}th,td{text-align:left;border-bottom:1px solid #2c3550;padding:11px;vertical-align:middle}th{color:#a8b6d6}.scroll{overflow-x:auto}.tag{display:inline-block;background:#2c3a5c;border-radius:20px;padding:5px 9px;white-space:nowrap;font-size:12px}.overlay{position:fixed;inset:0;background:#050816e8;display:none;align-items:center;justify-content:center;padding:15px;z-index:10}.overlay.open{display:flex}.modal{background:#19223b;border:1px solid #405078;border-radius:18px;padding:20px;width:min(96vw,980px);max-height:96vh;overflow:auto}.viewer{background:#10192e;border-radius:12px;padding:12px;margin:12px 0;min-height:160px;text-align:center}.viewer canvas{display:block;width:auto;max-width:100%;height:auto;max-height:65vh;margin:8px auto;background:white;border-radius:6px}.viewer #editCanvas{width:100%;max-height:60vh;object-fit:contain;touch-action:none}.hidden,[hidden]{display:none!important}.small{font-size:12px}.statusline{min-height:18px;margin:10px 0}.row.left{justify-content:flex-start}.row.center{justify-content:center}.nowrap{white-space:nowrap}@media(max-width:750px){.stats{grid-template-columns:repeat(2,1fr)}th,td{padding:8px;font-size:12px}header{padding:14px}}
+
+/* Owner dashboard: readable columns inside the Shop Studio iframe */
+.wrap{max-width:none;width:100%;margin:12px auto;padding:0 16px}
+header{padding:14px 16px}
+.stats{gap:10px;margin:12px 0}
+.stat,.card{padding:14px}
+.scroll{width:100%;overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch}
+.scroll table{width:100%;min-width:1040px;table-layout:fixed;border-collapse:collapse}
+.scroll th,.scroll td{padding:12px 10px;vertical-align:middle;text-align:left;line-height:1.45;overflow-wrap:normal;word-break:normal}
+.scroll th:nth-child(1),.scroll td:nth-child(1){width:17%}
+.scroll th:nth-child(2),.scroll td:nth-child(2){width:15%}
+.scroll th:nth-child(3),.scroll td:nth-child(3){width:27%}
+.scroll th:nth-child(4),.scroll td:nth-child(4){width:14%}
+.scroll th:nth-child(5),.scroll td:nth-child(5){width:15%}
+.scroll th:nth-child(6),.scroll td:nth-child(6){width:12%}
+.scroll td:nth-child(1){overflow-wrap:anywhere;font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.scroll td:nth-child(3){overflow-wrap:anywhere}
+.scroll td:nth-child(4){overflow-wrap:anywhere}
+.scroll td:nth-child(5) .tag{white-space:normal;overflow-wrap:anywhere;display:inline-block;max-width:100%;line-height:1.35}
+.scroll td:nth-child(6) button{display:block;width:100%;margin:3px 0;padding:9px 5px;white-space:normal;line-height:1.35}
+@media(max-width:750px){.scroll table{min-width:980px}.scroll th,.scroll td{font-size:13px;padding:10px 8px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Compact six-column layout: keep Actions fully visible in embedded Shop Studio. */
+.wrap{padding:0 10px}
+.card{padding:12px}
+.scroll{width:100%;max-width:100%;overflow-x:auto}
+.scroll table{width:100%;min-width:760px;table-layout:fixed}
+.scroll th,.scroll td{padding:10px 7px;line-height:1.35;font-size:13px;vertical-align:middle;overflow-wrap:anywhere;word-break:normal}
+.scroll th:nth-child(1),.scroll td:nth-child(1){width:13%}
+.scroll th:nth-child(2),.scroll td:nth-child(2){width:14%}
+.scroll th:nth-child(3),.scroll td:nth-child(3){width:21%}
+.scroll th:nth-child(4),.scroll td:nth-child(4){width:13%}
+.scroll th:nth-child(5),.scroll td:nth-child(5){width:17%}
+.scroll th:nth-child(6),.scroll td:nth-child(6){width:22%}
+.scroll td:nth-child(1){font:11px/1.35 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
+.scroll td:nth-child(3){overflow-wrap:anywhere}
+.scroll td:nth-child(5) .tag{font-size:11px;line-height:1.3;max-width:100%;padding:5px 6px;white-space:normal;overflow-wrap:anywhere}
+.scroll td:nth-child(6){white-space:normal}
+.scroll td:nth-child(6) button{display:block;width:100%;max-width:100%;margin:4px 0;padding:9px 6px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;text-align:center;font-size:12px}
+@media(max-width:900px){.scroll table{min-width:760px}}
+
+/* Compact embedded dashboard: no redundant header, readable text and action menus. */
+body{font-size:15px}.wrap{width:100%;max-width:none;padding:10px;margin:0}.wrap h1{font-size:23px;margin:4px 0 10px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:8px 0 12px}.stat{padding:10px}.stat b{font-size:22px;margin-top:3px}.card{padding:12px}.scroll{overflow-x:auto}.scroll table{min-width:740px;width:100%;table-layout:fixed}.scroll th,.scroll td{font-size:14px;padding:10px 7px;line-height:1.45;overflow-wrap:anywhere}.scroll th:nth-child(1),.scroll td:nth-child(1){width:10%}.scroll th:nth-child(2),.scroll td:nth-child(2){width:15%}.scroll th:nth-child(3),.scroll td:nth-child(3){width:23%}.scroll th:nth-child(4),.scroll td:nth-child(4){width:15%}.scroll th:nth-child(5),.scroll td:nth-child(5){width:16%}.scroll th:nth-child(6),.scroll td:nth-child(6){width:21%}.scroll td:nth-child(1){font:13px/1.4 ui-monospace,Consolas,monospace}.scroll td:nth-child(5) .tag{font-size:11px}.scroll td:nth-child(6) select{width:100%;max-width:100%;margin:0 0 6px}.scroll td:nth-child(6) button{width:100%;margin:0;font-size:14px}select{background:#111a32;color:white;border:1px solid #435172;border-radius:9px;padding:9px;min-width:0}button{font-size:14px}@media(max-width:750px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+ .wrap{padding:4px 10px}.stats{margin:0 0 12px}.scroll table{min-width:760px}.scroll td:nth-child(1){font-size:14px}.scroll td:nth-child(3){font-size:15px}
+
+/* FINAL compact order table. Keep Actions visible without shrinking the iframe. */
+body{font-size:15px}.wrap{padding:8px 12px;width:100%;max-width:none}
+.card{padding:12px;min-width:0}.stats{gap:9px;margin:2px 0 12px}
+.scroll{width:100%;max-width:100%;overflow-x:auto;overflow-y:visible;scrollbar-gutter:stable}
+.scroll table{width:100%;min-width:730px;table-layout:fixed}
+.scroll th,.scroll td{font-size:14px;line-height:1.4;padding:12px 8px;vertical-align:middle;overflow-wrap:anywhere}
+.scroll th:nth-child(1),.scroll td:nth-child(1){width:9%}
+.scroll th:nth-child(2),.scroll td:nth-child(2){width:15%}
+.scroll th:nth-child(3),.scroll td:nth-child(3){width:23%}
+.scroll th:nth-child(4),.scroll td:nth-child(4){width:14%}
+.scroll th:nth-child(5),.scroll td:nth-child(5){width:17%}
+.scroll th:nth-child(6),.scroll td:nth-child(6){width:22%}
+.scroll td:nth-child(1){font:600 13px/1.4 ui-monospace,Consolas,monospace;word-break:normal;overflow-wrap:normal;white-space:nowrap}
+.scroll td:nth-child(3){overflow-wrap:anywhere}
+.scroll td:nth-child(5) .tag{font-size:11px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.scroll td:nth-child(6){padding-right:12px}
+.scroll td:nth-child(6) select{width:100%;max-width:100%;margin:0 0 6px;padding:8px 5px;font-size:13px}
+.scroll td:nth-child(6) button{display:block;width:100%;margin:0;padding:9px 6px;font-size:14px}
+@media(max-width:850px){.scroll table{min-width:730px}.scroll th,.scroll td{padding:9px 6px}}
+/* Pending orders and their action buttons are visually prominent. */
+.scroll td:nth-child(6) button.pending-go{background:#f2bc54;color:#18213a;font-weight:800;border:1px solid #ffd987}
+.scroll td:nth-child(6) button.pending-go:hover{background:#ffd47d}
+.scroll td:nth-child(6) button.pending-go:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#message:empty{display:none}
+/* Highlight new pending orders until an action is taken. */
+.scroll tbody tr.new-pending td{background:#253554;border-bottom-color:#526c98}
+.scroll tbody tr.new-pending td:first-child{box-shadow:inset 4px 0 #f2bc54}
+.scroll tbody tr.new-pending:hover td{background:#30436a}
+</style>
+</head>
+<body>
+<main class="wrap">
+ <div class="console-hidden-actions" hidden><select id="globalAction"><option value="refresh">Refresh orders</option><option value="top">Go to top</option></select><button id="refresh">Refresh</button></div>
+ <div class="stats"><div class="stat">Pending<b id="pending">–</b></div><div class="stat">Approved<b id="approved">–</b></div><div class="stat">Submitted<b id="printed">–</b></div><div class="stat">Failed<b id="failed">–</b></div></div>
+ <div class="card"><div id="passwordFallback" hidden aria-hidden="true"><label>Owner password <input type="password" id="ownerPassword" autocomplete="current-password" placeholder="Owner password"></label> <button id="passwordLogin">Unlock dashboard</button><p class="muted small">Authentication stays on Google Apps Script; no password is stored in GitHub.</p></div><p id="message" class="muted" role="status">Verifying owner Google account…</p><div class="scroll"><table><thead><tr><th>Job</th><th>Date / Time</th><th>Document</th><th>Settings</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+</main>
+<div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal">
+ <div class="top"><h2 id="modalTitle">Document preview / editor</h2><button class="secondary" id="close">Close ✕</button></div>
+ <p class="muted small">PDF: preview and navigate pages. Image: drag, zoom, rotate, and save changes while the job is pending.</p>
+ <div class="viewer"><div id="placeholder" class="muted">▧ Preparing document preview…</div><canvas id="pdfCanvas" hidden></canvas><canvas id="editCanvas" width="900" height="630" hidden></canvas></div>
+ <div id="pdfTools" class="row center" hidden><button class="secondary" id="prevPage">← Previous</button><span id="pageLabel">Page – / –</span><button class="secondary" id="nextPage">Next →</button><button class="secondary" id="pdfRotate">↻ Rotate view</button></div>
+ <div id="imageTools" class="row left" hidden><label>Zoom <input id="zoom" type="range" min="50" max="300" value="100"></label><button class="secondary" id="left">↶ Rotate</button><button class="secondary" id="right">↷ Rotate</button><button class="secondary" id="reset">Reset</button><button id="save">Save edited image</button></div>
+ <p class="muted statusline" id="editMessage" role="status"></p>
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let token='',current=null,img=null,angle=0,zoom=1,offset={x:0,y:0},drag=null;
+let pdfDoc=null,pdfPage=1,pdfRotation=0,previewSerial=0,rendering=false,queuedPage=null;
+let loadingJobs=false;
+const handledOrders=new Set();
+try{JSON.parse(sessionStorage.getItem('shopStudioHandledOrders')||'[]').forEach(id=>handledOrders.add(id))}catch(e){}
+function markHandled(id,row){
+ handledOrders.add(String(id));
+ if(row)row.classList.remove('new-pending');
+ try{sessionStorage.setItem('shopStudioHandledOrders',JSON.stringify([...handledOrders].slice(-500)))}catch(e){}
+}
+const canvas=$('editCanvas'),ctx=canvas.getContext('2d');
+if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}
+function message(s){$('message').textContent=s}
+function errorText(e){return e&&e.message?e.message:String(e)}
+function fail(e){message('Error: '+errorText(e));loadingJobs=false;$('refresh').disabled=false}
+function safeDate(j){const v=j.created_at??j.createdAt??j.created??j.date??j.time; if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?String(v):d.toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true})}
+function start(){message('Verifying owner Google account…');google.script.run.withSuccessHandler(t=>{token=t;$('passwordFallback').hidden=true;load()}).withFailureHandler(e=>{$('passwordFallback').hidden=true;message('Owner sign-in unavailable. Deploy the owner Apps Script separately with Google-account authentication and set OWNER_EMAIL. '+errorText(e))}).ownerSession()}
+$('passwordLogin').onclick=()=>{const password=$('ownerPassword').value;if(!password){message('Enter owner password');return}const b=$('passwordLogin');b.disabled=true;message('Verifying password…');google.script.run.withSuccessHandler(t=>{b.disabled=false;token=t;$('ownerPassword').value='';$('passwordFallback').hidden=true;load()}).withFailureHandler(e=>{b.disabled=false;message('Login failed: '+errorText(e))}).ownerLogin(password)};
+$('ownerPassword').addEventListener('keydown',e=>{if(e.key==='Enter')$('passwordLogin').click()});
+function load(){if(!token||loadingJobs)return;loadingJobs=true;$('refresh').disabled=true;
+ google.script.run.withSuccessHandler(data=>{loadingJobs=false;$('refresh').disabled=false;if(!Array.isArray(data)){fail(Error('Unexpected jobs response'));return}
+ const body=$('rows');body.replaceChildren();const counts={PENDING:0,APPROVED:0,SUBMITTED_TO_PRINTER:0,PRINT_FAILED:0};
+ for(const j of data){counts[j.status]=(counts[j.status]||0)+1;const tr=document.createElement('tr');if(j.status==='PENDING'&&!handledOrders.has(String(j.id)))tr.classList.add('new-pending');
+ const texts=[j.id?('SP-'+String(j.id).slice(-4)):'—',safeDate(j),(j.name||'Guest')+' / '+(j.file||'Document'),[j.paper||'A4',j.mode||'BW',(j.copies||1)+' copies',j.pageRange?'Pages: '+j.pageRange:''].filter(Boolean).join(' • ')];
+ for(const [i,s] of texts.entries()){const td=document.createElement('td');td.textContent=s;if(i===0)td.title=String(j.id||'');tr.append(td)}
+ const status=document.createElement('td');const tag=document.createElement('span');tag.className='tag';tag.textContent=j.status||'UNKNOWN';status.append(tag);tr.append(status);
+ const actions=document.createElement('td');const choice=document.createElement('select');choice.setAttribute('aria-label','Action for '+j.id);choice.title=j.id;
+ for(const [label,value] of (j.status==='PENDING'?[['Approve','APPROVED'],['Preview / edit','preview'],['Reject','REJECTED']]:[['Preview / edit','preview']])){const opt=document.createElement('option');opt.textContent=label;opt.value=value;choice.append(opt)}
+ const go=document.createElement('button');go.textContent='Go →';go.className=j.status==='PENDING'?'pending-go':'secondary';go.onclick=()=>{const next=choice.value;if(next==='preview'){markHandled(j.id,tr);openEditor(j);return}if(!confirm((next==='APPROVED'?'Approve':'Reject')+' '+j.id+'?'))return;go.disabled=true;google.script.run.withSuccessHandler(()=>{markHandled(j.id,tr);go.disabled=false;load()}).withFailureHandler(e=>{go.disabled=false;fail(e)}).changeStatus(token,j.id,next)};
+ actions.append(choice,go);
+ tr.append(actions);body.append(tr)}
+ $('pending').textContent=counts.PENDING;$('approved').textContent=counts.APPROVED;$('printed').textContent=counts.SUBMITTED_TO_PRINTER;$('failed').textContent=counts.PRINT_FAILED;
+ message('');
+  const tableScroll=document.querySelector('.scroll');if(tableScroll)tableScroll.scrollLeft=tableScroll.scrollWidth-tableScroll.clientWidth;
+ }).withFailureHandler(fail).jobs(token)}
+$('refresh').onclick=()=>{if($('globalAction').value==='top'){window.scrollTo({top:0,behavior:'smooth'});return}token?load():start()};
+function draw(){if(!img)return;ctx.clearRect(0,0,900,630);ctx.fillStyle='#fff';ctx.fillRect(0,0,900,630);ctx.save();ctx.translate(450+offset.x,315+offset.y);ctx.rotate(angle*Math.PI/180);const scale=Math.min(900/img.width,630/img.height)*zoom;ctx.drawImage(img,-img.width*scale/2,-img.height*scale/2,img.width*scale,img.height*scale);ctx.restore()}
+async function renderPdf(){if(!pdfDoc)return;if(rendering){queuedPage=pdfPage;return}rendering=true;try{const page=await pdfDoc.getPage(pdfPage);const base=page.getViewport({scale:1,rotation:pdfRotation});const scale=Math.min(1.7,Math.max(.4,850/base.width));const viewport=page.getViewport({scale,rotation:pdfRotation});const c=$('pdfCanvas');c.width=Math.ceil(viewport.width);c.height=Math.ceil(viewport.height);await page.render({canvasContext:c.getContext('2d'),viewport}).promise;$('pageLabel').textContent='Page '+pdfPage+' / '+pdfDoc.numPages;$('editMessage').textContent='PDF preview ready. This viewer does not modify the original PDF.'}catch(e){$('editMessage').textContent='PDF render failed: '+errorText(e)}finally{rendering=false;if(queuedPage!==null){queuedPage=null;renderPdf()}}}
+function openEditor(j){const serial=++previewSerial;current=j;img=null;angle=0;zoom=1;offset={x:0,y:0};pdfDoc=null;pdfPage=1;pdfRotation=0;$('zoom').value=100;$('overlay').classList.add('open');$('placeholder').hidden=false;$('placeholder').textContent='▧ Loading document preview…';$('pdfCanvas').hidden=true;canvas.hidden=true;$('pdfTools').hidden=true;$('imageTools').hidden=true;$('editMessage').textContent='Loading document…';
+ google.script.run.withSuccessHandler(async p=>{if(serial!==previewSerial)return;try{
+ if(!p||!p.data||!p.mime)throw Error('Preview response has no file data');
+ const raw=atob(p.data);const bytes=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+ const mime=String(p.mime).toLowerCase().split(';')[0];
+ if(mime==='application/pdf'){
+ if(!window.pdfjsLib)throw Error('PDF.js library could not load. Check internet/CDN access.');
+ pdfDoc=await pdfjsLib.getDocument({data:bytes}).promise;if(serial!==previewSerial)return;$('placeholder').hidden=true;$('pdfCanvas').hidden=false;$('pdfTools').hidden=false;await renderPdf();
+ }else if(mime==='image/jpeg'||mime==='image/png'||mime==='image/webp'){
+ const blob=new Blob([bytes],{type:mime});const url=URL.createObjectURL(blob);const image=new Image();image.onload=()=>{URL.revokeObjectURL(url);if(serial!==previewSerial)return;img=image;$('placeholder').hidden=true;canvas.hidden=false;$('imageTools').hidden=j.status!=='PENDING';draw();$('editMessage').textContent=j.status==='PENDING'?'Drag image to reposition, or adjust zoom/rotation.':'Image preview only: editing requires PENDING status.'};image.onerror=()=>{URL.revokeObjectURL(url);$('editMessage').textContent='Image decode failed. Check file format.'};image.src=url;
+ }else throw Error('Unsupported preview format: '+mime);
+ }catch(e){$('placeholder').textContent='▧ Preview unavailable';$('editMessage').textContent=errorText(e)}
+ }).withFailureHandler(e=>{if(serial===previewSerial){$('placeholder').textContent='▧ Preview unavailable';$('editMessage').textContent=errorText(e)}}).preview(token,j.id)}
+$('close').onclick=()=>{++previewSerial;$('overlay').classList.remove('open');pdfDoc=null;img=null};
+$('prevPage').onclick=()=>{if(pdfDoc&&pdfPage>1){pdfPage--;renderPdf()}};
+$('nextPage').onclick=()=>{if(pdfDoc&&pdfPage<pdfDoc.numPages){pdfPage++;renderPdf()}};
+$('pdfRotate').onclick=()=>{if(pdfDoc){pdfRotation=(pdfRotation+90)%360;renderPdf()}};
+$('zoom').oninput=e=>{zoom=Number(e.target.value)/100;draw()};$('left').onclick=()=>{angle-=90;draw()};$('right').onclick=()=>{angle+=90;draw()};$('reset').onclick=()=>{angle=0;zoom=1;offset={x:0,y:0};$('zoom').value=100;draw()};
+canvas.onpointerdown=e=>{if(!img||current?.status!=='PENDING')return;drag={x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId)};
+canvas.onpointermove=e=>{if(!drag)return;const r=canvas.getBoundingClientRect();offset.x+=(e.clientX-drag.x)*900/r.width;offset.y+=(e.clientY-drag.y)*630/r.height;drag={x:e.clientX,y:e.clientY};draw()};canvas.onpointerup=canvas.onpointercancel=()=>drag=null;
+$('save').onclick=()=>{if(!current||current.status!=='PENDING'||!img)return;const b=$('save');b.disabled=true;$('editMessage').textContent='Saving edited image…';canvas.toBlob(blob=>{if(!blob){b.disabled=false;$('editMessage').textContent='Could not create edited image';return}const reader=new FileReader();reader.onload=()=>google.script.run.withSuccessHandler(()=>{$('editMessage').textContent='Image saved. Review before approving.';b.disabled=false;load()}).withFailureHandler(e=>{$('editMessage').textContent=errorText(e);b.disabled=false}).replacePendingImage(token,current.id,String(reader.result).split(',')[1],'image/png');reader.readAsDataURL(blob)},'image/png')};
+setInterval(()=>{if(token&&!document.hidden&&!$('overlay').classList.contains('open'))load()},12000);
+start();
+</script>
+</body>
+</html>

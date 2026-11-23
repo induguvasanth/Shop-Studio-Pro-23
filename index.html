@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#0b0b0e" name="theme-color"/>
+<meta content="Premium local-first document, photo, PDF and print toolkit for cyber/photo shops." name="description"/>
+<title>Shop Studio Pro v11.8 • V25</title>
+<link href="manifest.webmanifest" rel="manifest"/>
+<link href="assets/icon.svg" rel="icon" type="image/svg+xml"/>
+<link href="shopstudio.bundle.css?v=23.1" rel="stylesheet"/>
+<meta content="11.8.0" name="shop-build"/>
+<link href="studio-interactions-fix.css" rel="stylesheet"/></head>
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+<div class="brand">
+<div class="brand-mark">S</div>
+<div>
+<div class="brand-title">Shop Studio</div>
+<div class="brand-subtitle">PRO TOOLKIT • V11.8</div><div style="font-size:9px;color:#666;margin-top:3px">BUILD 11.8.0 • V25</div>
+</div>
+</div>
+<nav class="nav">
+<button class="nav-item active" data-section="scanner">Scan Document</button>
+<button class="nav-item" data-section="photo">Passport Photo</button>
+<button class="nav-item" data-section="cards">Smart Card</button>
+<button class="nav-item" data-section="resize">Photo &amp; Signature</button>
+<button class="nav-item" data-section="compressfile">Compress File</button>
+<button class="nav-item" data-section="print">Print Studio</button>
+<button class="nav-item" data-section="pdf">PDF Tools</button>
+<button class="nav-item" data-section="ocr">OCR</button>
+<button class="nav-item" data-section="recent">Recent Jobs</button>
+<button class="nav-item" data-section="qrorders">QR Print Orders</button>
+</nav>
+<div class="privacy-card">
+<div class="privacy-dot"></div>
+<div>
+<strong>Local-first</strong>
+<p>Files stay on this computer unless you choose otherwise.</p>
+</div>
+</div>
+</aside>
+<main class="main">
+<header class="topbar">
+<div>
+<div class="eyebrow">LOCAL • PRIVATE • PRINT READY</div>
+<h1 id="pageTitle">Scan Document</h1>
+</div>
+<div class="top-actions">
+<button class="ghost-btn" hidden="" id="installBtn">Install App</button>
+<button aria-label="Toggle light or dark mode" class="theme-toggle" id="themeToggle" type="button">☀ Light</button><button class="primary-btn" data-section-jump="scanner">New Job</button>
+</div>
+</header>
+<section class="section active" id="scanner">
+<div class="panel tool-workspace">
+<div class="workspace-head">
+<div><span class="eyebrow">DOCUMENT WORKSPACE</span><h2>Scan Document</h2><p class="scan-subtitle">Upload a document image, adjust the crop, and export a PDF.</p></div>
+<div class="button-row">
+<label class="upload-btn">Upload<input accept="image/*" hidden="" id="scanInput" multiple="" type="file"/></label>
+</div>
+</div>
+<div class="workspace-layout">
+<aside class="tool-sidebar">
+<div class="control-group scan-image-group">
+<h4>Image adjustments</h4>
+<label>Filter<select id="scanFilter"><option value="original">Original</option><option value="vibrant">Vibrant</option><option value="soft">Soft</option><option value="document">Document</option><option value="bw">B&amp;W</option></select></label>
+<label>Rotate<select id="scanRotate"><option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label><button class="mini-btn" id="scanFlipHorizontal" type="button">⇋ Flip Horizontal</button>
+<button class="mini-btn" id="scanWhiteBgBtn" type="button">Remove BG + White</button>
+<label>Shadow<input id="shadowStrength" max="100" min="0" type="range" value="0"/></label>
+<label>Sharpness<input id="ocrSharpen" max="100" min="0" type="range" value="0"/></label>
+</div>
+<div class="control-group">
+<h4>Crop</h4>
+<div class="crop-mode-grid">
+<button class="mini-btn" id="scanCropBtn" type="button">Crop</button>
+<button class="mini-btn" id="scanManualCropBtn" type="button">Perspective Crop</button>
+</div>
+<button class="primary-btn" id="applyScanCrop">Apply Crop</button>
+<button class="ghost-btn" id="deskewBtn" type="button">Auto Detect Edges</button>
+</div>
+<div class="control-group scan-advanced">
+<h4>View</h4>
+<label>Zoom<input id="scanZoom" max="400" min="50" type="range" value="100"/><span class="zoom-value" id="scanZoomValue">100%</span></label>
+</div>
+</aside>
+<div class="workspace-main">
+<div class="manual-crop-stage scanner-crop-stage" id="scanCropStage">
+<canvas id="scanCanvas"></canvas>
+<div class="scan-crop-layer" id="scanCropLayer">
+<svg class="scan-overlay" id="scanOverlay" preserveaspectratio="none" viewbox="0 0 100 100"><polygon id="scanPolygon" points=""></polygon></svg>
+<span class="scan-point" data-point="0"></span><span class="scan-point" data-point="1"></span><span class="scan-point" data-point="2"></span><span class="scan-point" data-point="3"></span>
+</div>
+<div class="empty-state" id="scanEmpty">Add a page to start</div>
+</div>
+<div class="scan-pages-label"><strong>Pages</strong><span id="scanSelectionInfo">Click to select • Ctrl+click for multiple • Shift+click for range</span></div>
+<div aria-label="Document pages" aria-multiselectable="true" class="page-strip" id="scanPages" role="listbox"></div>
+<div class="workspace-actions">
+<button class="ghost-btn" id="addScanToPdf">+ Blank Page</button>
+<label class="ghost-btn scan-action-upload">+ Add PDF<input accept="application/pdf,.pdf" hidden="" id="scanInsertPdf" type="file"/></label>
+<button class="ghost-btn" id="scanSelectAll">Select All</button>
+<button class="ghost-btn" id="scanRemoveSelected">Remove Page(s)</button>
+<button class="ghost-btn" id="scanPrintEdited">Print</button>
+<button class="primary-btn" id="exportScanPdf">Export PDF</button>
+<button class="ghost-btn" hidden="" id="downloadScanImage">PNG</button>
+<button class="ghost-btn" hidden="" id="downloadOcrScan">OCR PNG</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="photo">
+<div class="panel tool-workspace">
+<div class="workspace-head">
+<div><span class="eyebrow">PHOTO STUDIO</span><h2>Passport Photo</h2></div>
+<div class="button-row">
+<label class="upload-btn">Upload<input accept="image/*" hidden="" id="photoInput" type="file"/></label>
+<label class="ghost-btn" hidden="">Bulk<input accept="image/*" hidden="" id="bulkPhotoInput" multiple="" type="file"/></label>
+</div>
+</div>
+<div class="workspace-layout">
+<aside class="tool-sidebar">
+<div class="control-group">
+<h4>Crop your photo</h4>
+<button class="mini-btn" id="photoCropBtn">Select Crop Area</button>
+<button class="mini-btn" hidden="" id="whiteBgBtn">Remove BG + White</button>
+<button class="mini-btn" hidden="" id="blueBgBtn">Remove BG + Blue</button>
+<button class="mini-btn" hidden="" id="enhanceBtn">Natural Enhance 2×</button>
+<label hidden="">Brightness<input id="brightness" max="150" min="50" type="range" value="100"/></label>
+<label hidden="">Contrast<input id="contrast" max="160" min="50" type="range" value="100"/></label>
+</div>
+<div aria-hidden="true" class="control-group passport-hidden-defaults" hidden="">
+<h4>Size</h4>
+<label>Photo Size<select id="passportRatio"><option value="0.7777778">35×45 mm</option><option value="0.8">40×50 mm</option><option value="free">Free</option></select></label>
+<label>Crop<select id="passportCropLock"><option selected="" value="locked">Lock Ratio</option><option value="free">Free</option></select></label>
+<label>Head Guide<input id="headGuidePercent" max="80" min="55" type="range" value="70"/><span class="zoom-value" id="headGuideValue">70%</span></label>
+<label>Zoom<input id="photoZoom" max="400" min="50" type="range" value="100"/><span class="zoom-value" id="photoZoomValue">100%</span></label>
+</div>
+<div aria-hidden="true" class="control-group passport-hidden-defaults" hidden="">
+<h4>Print</h4>
+<label>Paper<select id="passportPaper"><option value="6x4">6×4</option><option value="a4">A4</option></select></label>
+<label>Template<select id="passportTemplate"><option selected="" value="auto">Auto</option><option value="8-35x45">8 × 35×45</option><option value="6-35x45">6 × 35×45</option><option value="8-40x50">8 × 40×50</option></select></label>
+<label>Copies<select id="passportCopies"><option>8</option><option>6</option><option>4</option><option>12</option></select></label>
+<label>Border<select id="passportBorder"><option value="0">None</option><option value="1">1 px</option><option selected="" value="2">2 px</option><option value="3">3 px</option></select></label>
+<label>Cut Lines<select id="passportCutLines"><option selected="" value="yes">On</option><option value="no">Off</option></select></label>
+</div>
+</aside>
+<div class="workspace-main">
+<div class="status-inline" id="photoAiStatus">Ready • Original is preserved until you apply an edit.</div>
+<div class="manual-crop-stage photo-crop-stage" id="photoCropStage">
+<canvas id="photoCanvas"></canvas>
+<div class="crop-box" id="photoCropBox"><span class="crop-handle nw" data-h="nw"></span><span class="crop-handle ne" data-h="ne"></span><span class="crop-handle sw" data-h="sw"></span><span class="crop-handle se" data-h="se"></span></div>
+<div class="face-guide" id="faceGuide"><div class="safe-top-line"></div><div class="head-oval" id="headOval"></div><div class="eye-line"></div><div class="chin-line"></div></div>
+<div class="empty-state" id="photoEmpty">Add a photo to start</div>
+</div>
+<div class="workspace-actions">
+<button class="ghost-btn" hidden="" id="toggleGuide">Guide</button>
+<button class="primary-btn" id="applyPhotoCrop">Apply Crop</button>
+<button class="primary-btn" id="makePassportSheet">Generate 8-Photo Sheet</button>
+<button class="ghost-btn" hidden="" id="bulkPassportExport">Bulk Export</button>
+<button class="ghost-btn" hidden="" id="downloadPhoto">PNG</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="cards">
+<div class="panel tool-workspace">
+<div class="workspace-head">
+<div><span class="eyebrow">SMART CARD</span><h2>Card Crop &amp; Print</h2></div>
+<div class="button-row">
+<label class="upload-btn">PDF<input accept="application/pdf" hidden="" id="cardPdfInput" type="file"/></label>
+<label class="ghost-btn">Image<input accept="image/*" hidden="" id="cardImageInput" type="file"/></label>
+<button class="ghost-btn" id="prevCardPage">‹</button>
+<button class="ghost-btn" id="nextCardPage">›</button>
+<span class="page-label" id="cardPageLabel">No file</span>
+</div>
+</div>
+<div class="workspace-layout">
+<aside class="tool-sidebar">
+<div class="control-group">
+<h4>Crop &amp; Print</h4>
+<div class="crop-mode-grid">
+<button class="mini-btn" id="cardSimpleCropBtn" type="button">Crop</button>
+<button class="mini-btn" id="manualCardPerspectiveBtn" type="button">Perspective Crop</button>
+</div>
+<button class="mini-btn" id="cardNoCrop" type="button">No Crop</button>
+<button class="primary-btn" id="applyCardCrop" type="button">Apply Crop</button>
+<div class="crop-help">Auto-detects when opened • drag corners/edges or move crop • Enter applies</div>
+<button hidden="" id="autoDetectCardBtn" type="button">Auto Detect Corners</button>
+<button hidden="" id="autoSplitCardsBtn" type="button">Find Front + Back</button>
+<button hidden="" id="cardFlexibleCropBtn" type="button">Flexible Crop</button>
+<button hidden="" id="applyCardFlexibleCrop" type="button">Apply Flexible Crop</button>
+<button hidden="" id="resetCardCrop" type="button">Reset Corners</button>
+<button hidden="" id="moveCardCropBtn" type="button">Move Crop Area</button>
+<label>Output Size<select id="cardAspect"><option selected="" value="free">Free — adjustable crop</option><option value="1.585">PVC 85.6×54 mm (exact)</option><option value="1.586">Aadhaar / PAN 85.6×54 mm</option><option value="aadhaar-wide">Aadhaar Wide 6.74 × 2.125 in</option></select></label>
+<div class="segmented" id="cardSideTabs"><button class="active" data-side="front" type="button">FRONT</button><button data-side="back" type="button">BACK</button></div>
+<label>Active Side<select id="cardCropAction"><option value="front">Front</option><option value="back">Back</option></select></label>
+<button class="mini-btn" id="saveCardCrop">Apply &amp; Save Front</button>
+</div>
+<div class="control-group">
+<h4>Quality</h4>
+<label>DPI<select id="cardExportDpi"><option value="300">300</option><option selected="" value="600">600</option></select></label>
+<label>Render<select id="cardRenderQuality"><option value="2.5">High</option><option value="3.5">Very High</option><option selected="" value="5">Maximum</option></select></label>
+<label>Format<select id="cardOutputFormat"><option selected="" value="image/png">PNG — lossless</option><option value="image/jpeg">JPG — high quality</option></select></label>
+<div class="notice compact-notice">Free, PVC, Aadhaar / PAN, or Aadhaar Wide output. Crop selection and saved size follow the selected preset.</div>
+<label>Zoom<input id="cardZoom" max="400" min="50" type="range" value="100"/><span class="zoom-value" id="cardZoomValue">100%</span></label>
+<button class="primary-btn" id="exportCardCropImage">Export PVC</button>
+</div>
+<div class="control-group">
+<h4>Print Sheet</h4>
+<label>Card Type<select id="cardType"><option>Aadhaar</option><option>PAN</option><option>Driving Licence</option><option>e-Shram</option><option>Custom</option></select></label>
+<label>Paper<select id="cardPaper"><option value="a4">A4</option><option value="6x4">6×4</option></select></label>
+<label>Layout<select id="cardLayout"><option selected="" value="top-bottom">Top / Bottom</option><option value="side-by-side">Side by Side</option><option value="aadhaar-pair">Aadhaar Pair — 2 cards / A4</option><option value="reference-pair">Reference Pair — 7 × 2.4 in / A4</option></select></label>
+<label class="card-advanced-hidden">Margin<input id="cardPrintMargin" max="30" min="0" step="0.5" type="number" value="8"/></label>
+<label class="card-advanced-hidden">Gap<input id="cardPrintGap" max="30" min="0" step="0.5" type="number" value="7"/></label>
+</div>
+</aside>
+<div class="workspace-main">
+<div class="manual-crop-stage card-perspective-stage" id="cardPerspectiveStage">
+<canvas id="cardSourceCanvas"></canvas>
+<div class="card-perspective-layer" id="cardPerspectiveLayer">
+<svg id="cardPerspectiveOverlay" preserveaspectratio="none" viewbox="0 0 100 100"><polygon id="cardPerspectivePolygon"></polygon></svg>
+<span class="card-point" data-point="0"></span><span class="card-point" data-point="1"></span><span class="card-point" data-point="2"></span><span class="card-point" data-point="3"></span>
+</div>
+<div class="empty-state" id="cardSourceEmpty">Open a PDF or image</div>
+</div>
+<div class="detected-cards-panel" hidden="" id="detectedCardsPanel">
+<div class="workspace-subhead"><strong>Detected Cards</strong><button class="ghost-btn" id="clearDetectedCards">Clear</button></div>
+<div class="detected-cards-grid" id="detectedCardsGrid"></div>
+</div>
+<div class="saved-card-row">
+<div><span>Front</span><canvas id="cardFrontPreview"></canvas></div>
+<div><span>Back</span><canvas id="cardBackPreview"></canvas></div>
+</div>
+<div class="canvas-wrap compact-output"><canvas id="cardCanvas"></canvas><div class="empty-state" id="cardEmpty">Front and back preview</div></div>
+<div class="workspace-actions">
+<button class="ghost-btn" id="bulkExportCardsBtn">Bulk Export</button>
+<button class="primary-btn" id="buildCardSheet">Build Sheet</button>
+<button class="ghost-btn" id="downloadCardSheet">PNG Sheet</button>
+<button class="ghost-btn" id="downloadCardSheetPdf">PDF Sheet</button>
+<button class="ghost-btn" id="printCardSheet">Print</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="resize">
+<div class="panel compact-tool">
+<div class="workspace-head"><div><span class="eyebrow">PHOTO &amp; SIGNATURE</span><h2>Resize for Applications</h2></div><label class="upload-btn">Upload<input accept="image/*" hidden="" id="resizeInput" type="file"/></label></div>
+<div class="compact-controls">
+<label>Preset<select id="jobPreset"><option value="custom">Custom</option><option value="passport">Passport 35×45 mm</option><option value="ssc-photo">SSC Photo 3.5×4.5 cm</option><option value="railway-photo">Railway Photo 35×45 mm</option><option value="signature">Signature 6×2 cm</option></select></label>
+<label>Width<input id="resizeW" step="0.1" type="number" value="35"/></label>
+<label>Height<input id="resizeH" step="0.1" type="number" value="45"/></label>
+<label>Unit<select id="resizeUnit"><option value="mm">mm</option><option value="cm">cm</option><option value="in">inches</option><option value="px">pixels</option></select></label>
+<label>DPI<input id="resizeDpi" type="number" value="300"/></label>
+<label aria-hidden="true" hidden="">Legacy Size<input id="resizeTargetKb" type="number" value=""/></label>
+</div>
+<div class="studio-crop-actions"><button class="ghost-btn" id="resizeCropNew" type="button">Select Crop Area</button><button class="primary-btn" id="resizeApplyCropNew" type="button">Apply Crop</button><button class="ghost-btn" id="resizeCancelCropNew" type="button">Cancel Crop</button></div><div class="canvas-wrap compact-output"><canvas id="resizeCanvas"></canvas><div class="empty-state" id="resizeEmpty">Upload photo or signature</div></div>
+<div class="workspace-actions"><button class="ghost-btn" id="signatureCleanBtn">Clean Signature</button><button class="primary-btn" id="processResize">Resize &amp; Export</button></div>
+</div>
+</section>
+<section aria-hidden="true" class="section" hidden="" id="compressor">
+<div class="panel compact-tool">
+<div class="workspace-head"><div><span class="eyebrow">LEGACY</span><h2>Compatibility Layer</h2></div><label class="upload-btn">Upload Image / PDF<input accept="image/*,application/pdf,.pdf" hidden="" id="compressInput" type="file"/></label></div>
+<div class="compact-controls">
+<label aria-hidden="true" hidden="">Legacy Size<input id="targetKb" min="5" type="number" value="50"/></label>
+<label>Max Width<input id="compressMaxW" placeholder="Optional" type="number"/></label>
+<div class="notice compact-notice">Output format follows the input: JPG → JPG, PNG → PNG, WEBP → WEBP, PDF → PDF.</div>
+</div>
+<div class="status-inline" id="compressStatus">Ready</div>
+<div class="workspace-actions"><button class="primary-btn" id="compressBtn">Resize / Compress &amp; Export</button></div>
+</div>
+</section>
+<section class="section" id="compressfile">
+<div class="panel tool-workspace">
+<div class="workspace-head">
+<div><span class="eyebrow">FILE OPTIMIZER</span><h2>Compress File</h2></div>
+<label class="upload-btn">Load Image / PDF<input accept="image/*,application/pdf,.pdf" hidden="" id="cf118Input" type="file"/></label>
+</div>
+<div class="workspace-layout">
+<aside class="tool-sidebar">
+<div class="control-group">
+<h4>Required Size</h4>
+<div class="compress-size-row"><input id="cf118Target" min="1" step="1" type="number" value="200"/><select id="cf118Unit"><option selected="" value="kb">KB</option><option value="mb">MB</option></select></div>
+<label>Quality<select id="cf118Quality"><option selected="" value="best">Best possible quality</option><option value="balanced">Balanced</option><option value="small">Smallest file</option></select></label>
+<label>Image Output<select id="cf118Format"><option selected="" value="auto">Auto / Best</option><option value="jpeg">JPG</option><option value="webp">WEBP</option><option value="png">PNG</option></select></label>
+<label>Max Dimension (px)<input id="cf118MaxDim" min="0" placeholder="Keep original" step="100" type="number"/></label>
+</div>
+<div class="control-group">
+<h4>Crop Before Compress</h4>
+<button class="mini-btn" id="cf118CropBtn">Crop</button>
+<button class="mini-btn" id="cf118ApplyCrop">Apply Crop</button>
+<button class="mini-btn" id="cf118ResetCrop">Reset Crop</button>
+<div class="crop-help">Drag the crop area or resize from any edge/corner. For PDFs the crop is applied to every page.</div>
+</div>
+</aside>
+<div class="workspace-main">
+<div class="status-inline" id="cf118Status">Load an image or PDF to start.</div>
+<div class="compress-preview-stage" id="cf118Stage">
+<div class="compress-canvas-shell" id="cf118Shell">
+<canvas id="cf118Canvas"></canvas>
+<div class="compress-crop-box" hidden="" id="cf118CropBox">
+<span class="compress-handle nw" data-h="nw"></span><span class="compress-handle n" data-h="n"></span><span class="compress-handle ne" data-h="ne"></span>
+<span class="compress-handle e" data-h="e"></span><span class="compress-handle se" data-h="se"></span><span class="compress-handle s" data-h="s"></span>
+<span class="compress-handle sw" data-h="sw"></span><span class="compress-handle w" data-h="w"></span>
+</div>
+</div>
+<div class="empty-state" id="cf118Empty">Load an image or PDF</div>
+</div>
+<div class="workspace-actions">
+<button class="primary-btn" id="cf118Compress">Compress &amp; Download</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="print">
+<div class="panel compact-tool">
+<div class="workspace-head"><div><span class="eyebrow">PRINT STUDIO</span><h2>Collage &amp; Layout</h2></div><label class="upload-btn">Upload Images<input accept="image/*" hidden="" id="printInput" multiple="" type="file"/></label></div>
+<div class="compact-controls">
+<label>Layout<select id="printCount"><option value="2">2 (two layers)</option><option>4</option><option>6</option><option selected="">8</option><option>9</option></select></label>
+<label>Paper<select id="printPaper"><option value="6x4">6×4</option><option value="a4">A4</option></select></label>
+<label>Orientation<select id="printOrientation"><option value="landscape">Landscape</option><option value="portrait">Portrait</option></select></label>
+<label>Margin<input id="printMargin" type="number" value="4"/></label>
+</div>
+<div class="canvas-wrap" id="printCanvasWrap"><canvas id="printCanvas"></canvas><div class="empty-state" id="printEmpty">Upload images</div></div>
+<div class="workspace-actions"><button class="primary-btn" id="buildPrintSheet">Build</button><button class="ghost-btn" id="downloadPrintSheet">PNG</button><button class="ghost-btn" id="downloadPrintSheetPdf">PDF</button><button class="ghost-btn" id="browserPrint">Print</button></div>
+</div>
+</section>
+<section class="section" id="pdf">
+<div class="panel compact-tool">
+<div class="workspace-head"><div><span class="eyebrow">PDF TOOLS</span><h2>PDF Utilities</h2></div></div>
+<div class="utility-grid">
+<div class="utility-card"><h3>Merge</h3><label class="upload-btn">Choose PDFs<input accept="application/pdf" hidden="" id="mergePdfInput" multiple="" type="file"/></label><button class="primary-btn" id="mergePdfBtn">Merge</button></div>
+<div class="utility-card"><h3>Images → PDF</h3><label class="upload-btn">Choose Images<input accept="image/*" hidden="" id="imagesPdfInput" multiple="" type="file"/></label><button class="primary-btn" id="imagesToPdfBtn">Create</button></div>
+<div class="utility-card"><h3>Split / Extract</h3><label class="upload-btn">Choose PDF<input accept="application/pdf" hidden="" id="splitPdfInput" type="file"/></label><input id="splitRange" placeholder="1-3,5"/><button class="primary-btn" id="splitPdfBtn">Export</button></div>
+<div class="utility-card"><h3>Rotate</h3><label class="upload-btn">Choose PDF<input accept="application/pdf" hidden="" id="rotatePdfInput" type="file"/></label><select id="pdfRotateAngle"><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select><button class="primary-btn" id="rotatePdfBtn">Rotate</button></div>
+<div class="utility-card"><h3>PDF → Images</h3><label class="upload-btn">Choose PDF<input accept="application/pdf" hidden="" id="pdfToImageInput" type="file"/></label><button class="primary-btn" id="pdfToImageBtn">Convert</button></div>
+<div class="utility-card"><h3>Reorder</h3><label class="upload-btn">Choose PDF<input accept="application/pdf" hidden="" id="reorderPdfInput" type="file"/></label><input id="reorderSequence" placeholder="3,1,2,4"/><button class="primary-btn" id="reorderPdfBtn">Reorder</button></div>
+</div>
+<div class="pdf-imposition-panel utility-card" id="advancedPdfStudio">
+<div class="workspace-head"><div><span class="eyebrow">PDF TOOLS</span><h3>Advanced PDF Studio — 2 Pages per A4 Sheet</h3></div></div>
+<p>Upload a PDF to automatically prepare A4 landscape sheets with two original pages side by side. Every second A4 sheet (sheets 2, 4, 6...) is rotated 180° as one unit, and each combined sheet gets one number at its bottom center.</p>
+<label class="upload-btn">Choose PDF<input accept="application/pdf,.pdf" hidden="" id="imposePdfInput" type="file"/></label>
+<button class="primary-btn" disabled="" id="imposePdfBuild" type="button">Generate Print-Ready PDF</button>
+<div aria-live="polite" class="status-inline" id="imposePdfStatus" role="status">Choose a PDF to automatically generate its print layout.</div>
+<div hidden="" id="imposePdfResult"><a class="primary-btn" download="PrintReady_2up_A4.pdf" id="imposePdfDownload">Download Print-Ready PDF</a><p class="crop-help">Print using A4 landscape, actual size (100%), and no additional pages-per-sheet scaling.</p></div>
+</div>
+<div aria-hidden="true" class="pdf-editor-panel" hidden="">
+<div class="workspace-head"><div><span class="eyebrow">PDF EDITOR</span><h2>Edit PDF — Text &amp; Image</h2></div><label class="upload-btn">Open PDF<input accept="application/pdf" hidden="" id="pdfEditInput" type="file"/></label></div>
+<div class="pdf-editor-toolbar">
+<label>Page<input id="pdfEditPage" min="1" type="number" value="1"/></label>
+<button class="ghost-btn" id="pdfEditPrev">‹</button><button class="ghost-btn" id="pdfEditNext">›</button>
+<label>Text<input id="pdfEditText" placeholder="Add text"/></label><label>Font Size<input id="pdfEditFontSize" max="120" min="6" type="number" value="16"/></label>
+<label>X<input id="pdfEditX" type="number" value="40"/></label><label>Y<input id="pdfEditY" type="number" value="40"/></label>
+<button class="mini-btn" id="pdfAddText">Add Text</button>
+<label class="upload-btn">Add Image<input accept="image/*" hidden="" id="pdfEditImage" type="file"/></label>
+<label>Image W<input id="pdfEditImageW" type="number" value="180"/></label><label>Image H<input id="pdfEditImageH" type="number" value="100"/></label>
+<button class="mini-btn" id="pdfAddImage">Add Image</button>
+<label>X<input id="pdfEditCoverX" type="number" value="40"/></label><label>Y<input id="pdfEditCoverY" type="number" value="40"/></label>
+<label>Cover W<input id="pdfEditCoverW" type="number" value="180"/></label><label>Cover H<input id="pdfEditCoverH" type="number" value="40"/></label>
+<button class="mini-btn" id="pdfCoverExisting">Edit Existing Area</button>
+<button class="primary-btn" id="pdfEditExport">Export Edited PDF</button>
+</div>
+<div class="pdf-editor-stage"><canvas id="pdfEditCanvas"></canvas><div class="empty-state" id="pdfEditEmpty">Open a PDF to edit text and image layers.</div></div>
+<div class="status-inline" id="pdfEditStatus">Open a PDF, then add text or images as editable layers.</div>
+</div>
+</div>
+</section>
+<section class="section" id="ocr">
+<div class="panel compact-tool">
+<div class="workspace-head"><div><span class="eyebrow">OCR</span><h2>OCR</h2></div><label class="upload-btn">Upload Image<input accept="image/*" hidden="" id="ocrInput" type="file"/></label></div>
+<div class="ocr-preview-shell" id="ocrPreviewShell"><div class="ocr-image-wrap" id="ocrImageWrap"><img alt="Uploaded image preview" id="ocrPreview"/><div class="ocr-select-box" hidden="" id="ocrSelectBox"></div></div><div class="empty-state" id="ocrPreviewEmpty">Upload an image to preview and extract text</div></div><div class="ocr-drag-help" id="ocrDragHelp">Drag over text on the image to extract and copy only that area.</div>
+<div class="workspace-actions"><button class="primary-btn" id="ocrBtn">Extract Text</button><button class="ghost-btn" id="copyOcr">Copy Text</button><button class="ghost-btn" id="printOcr">Print</button></div>
+<div class="status-inline" id="ocrStatus">Ready</div>
+<textarea id="ocrText" placeholder="Extracted text" rows="14"></textarea>
+</div>
+</section>
+<section class="section" id="recent">
+<div class="panel compact-tool">
+<div class="workspace-head"><div><span class="eyebrow">RECENT JOBS</span><h2>Local History</h2></div><button class="danger-btn" id="clearHistory">Clear</button></div>
+<div class="history-list" id="historyList"></div>
+</div>
+</section>
+<section class="section" id="qrorders"><div class="qr-restored-header"><h2>QR Print Orders</h2><p>Customer uploads and owner management. Use Open Owner Portal if the embedded page is blocked.</p><a class="primary-btn" href="Owner.html" rel="noopener" target="_blank">Open Owner Portal</a><a class="ghost-btn" href="Customer.html" rel="noopener" target="_blank">Open Customer Upload</a></div>
+<div class="qr-clean-shell">
+<div aria-hidden="true" class="qr-clean-head" hidden="">
+<details class="qr-clean-settings"><summary>Connection settings</summary>
+<div class="qr-clean-config"><label for="qrScriptUrl">Apps Script URL</label><input id="qrScriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+<button class="primary-btn" id="qrSaveUrl" type="button">Save URL</button></input></div>
+</details>
+</div>
+<div aria-hidden="true" class="qr-legacy-controls" hidden=""><button id="qrOpenOwner" type="button">Owner</button><button id="qrOpenCustomer" type="button">Customer</button></div>
+<iframe id="qrOwnerFrame" loading="lazy" src="Owner.html" title="Shop Studio print order management"></iframe>
+</div>
+</section>
+</main>
+</div>
+<script>
+(function () {
+  function showSectionSafe(id) {
+    var sections = document.querySelectorAll(".section");
+    var navs = document.querySelectorAll(".nav-item");
+    sections.forEach(function (s) { s.classList.toggle("active", s.id === id); });
+    navs.forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-section") === id); });
+    var active = document.querySelector('.nav-item[data-section="' + id + '"]');
+    var title = document.getElementById("pageTitle");
+    if (title) title.textContent = active ? active.textContent.trim() : "Dashboard";
+    try { history.replaceState(null, "", "#" + id); } catch (e) {}
+    window.scrollTo(0, 0);
+  }
+
+  window.__shopShowSection = showSectionSafe;
+
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest("[data-section], [data-section-jump]");
+    if (!el) return;
+    var id = el.getAttribute("data-section") || el.getAttribute("data-section-jump");
+    if (!id || !document.getElementById(id)) return;
+    e.preventDefault();
+    showSectionSafe(id);
+  }, true);
+
+  window.addEventListener("DOMContentLoaded", function () {
+    var hash = location.hash ? location.hash.slice(1) : "scanner";
+    if (!document.getElementById(hash) || hash === "home") hash = "scanner";
+    showSectionSafe(hash);
+  });
+})();
+</script>
+<input accept="image/*" disabled="" hidden="" id="cameraInput" type="file"/><button disabled="" hidden="" id="cameraScanBtn" type="button"></button><button disabled="" hidden="" id="scannerBridgeBtn" type="button"></button>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";</script>
+<script async="" src="https://docs.opencv.org/4.x/opencv.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="shopstudio-config.js"></script>
+<script src="shopstudio.bundle.js?v=23.1"></script>
+<!-- Printer scanning removed from Scan Document; local scanner bridge remains optional and independent. -->
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(()=>{});</script>
+<script src="studio-interactions-fix.js"></script></body>
+</html>
